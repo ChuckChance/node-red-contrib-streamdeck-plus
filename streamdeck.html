@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  RED.nodes.registerType('streamdeck-in',{
+  RED.nodes.registerType('streamdeck-keyInput',{
       category: 'hardware',
       color: '#3FADB5',
       defaults: {
@@ -9,12 +9,11 @@
       outputs:1,
       icon: "elgato.png",
       label: function() {
-          return this.name||"stream deck in";
+          return this.name||"keyInput";
       }
   });
 </script>
-
-<script type="text/x-red" data-template-name="streamdeck-in">
+<script type="text/x-red" data-template-name="streamdeck-keyInput">
   <div class="form-row">
       <label for="node-input-name"><i class="icon-tag"></i> Name</label>
       <input type="text" id="node-input-name" placeholder="Name">
@@ -22,7 +21,7 @@
 </script>
 
 <script type="text/javascript">
-  RED.nodes.registerType('streamdeck-out',{
+  RED.nodes.registerType('streamdeck-clearKey',{
       category: 'hardware',
       color: '#3FADB5',
       defaults: {
@@ -32,12 +31,121 @@
       outputs:0,
       icon: "elgato.png",
       label: function() {
-          return this.name||"stream deck out";
+          return this.name||"stream deck clearKey";
       }
   });
 </script>
+<script type="text/x-red" data-template-name="streamdeck-clearKey">
+  <div class="form-row">
+      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
 
-<script type="text/x-red" data-template-name="streamdeck-out">
+<script type="text/javascript">
+  RED.nodes.registerType('streamdeck-setBrightness',{
+      category: 'hardware',
+      color: '#3FADB5',
+      defaults: {
+          name: {value:""}
+      },
+      inputs:1,
+      outputs:0,
+      icon: "elgato.png",
+      label: function() {
+          return this.name||"stream deck setBrightness";
+      }
+  });
+</script>
+<script type="text/x-red" data-template-name="streamdeck-setBrightness">
+  <div class="form-row">
+      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType('streamdeck-setImage',{
+      category: 'hardware',
+      color: '#3FADB5',
+      defaults: {
+          name: {value:""}
+      },
+      inputs:1,
+      outputs:0,
+      icon: "elgato.png",
+      label: function() {
+          return this.name||"stream deck setImage";
+      }
+  });
+</script>
+<script type="text/x-red" data-template-name="streamdeck-setImage">
+  <div class="form-row">
+      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType('streamdeck-setColor',{
+      category: 'hardware',
+      color: '#3FADB5',
+      defaults: {
+          name: {value:""}
+      },
+      inputs:1,
+      outputs:0,
+      icon: "elgato.png",
+      label: function() {
+          return this.name||"stream deck setColor";
+      }
+  });
+</script>
+<script type="text/x-red" data-template-name="streamdeck-setColor">
+  <div class="form-row">
+      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType('streamdeck-clearKey',{
+      category: 'hardware',
+      color: '#3FADB5',
+      defaults: {
+          name: {value:""}
+      },
+      inputs:1,
+      outputs:0,
+      icon: "elgato.png",
+      label: function() {
+          return this.name||"stream deck clearKey";
+      }
+  });
+</script>
+<script type="text/x-red" data-template-name="streamdeck-clearKey">
+  <div class="form-row">
+      <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+      <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+</script>
+
+<script type="text/javascript">
+  RED.nodes.registerType('streamdeck-setText',{
+      category: 'hardware',
+      color: '#3FADB5',
+      defaults: {
+          name: {value:""}
+      },
+      inputs:1,
+      outputs:0,
+      icon: "elgato.png",
+      label: function() {
+          return this.name||"stream deck setText";
+      }
+  });
+</script>
+<script type="text/x-red" data-template-name="streamdeck-setText">
   <div class="form-row">
       <label for="node-input-name"><i class="icon-tag"></i> Name</label>
       <input type="text" id="node-input-name" placeholder="Name">
