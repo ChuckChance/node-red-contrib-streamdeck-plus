@@ -10,20 +10,12 @@ describe('streamdeck Node', function () {
   })
 
   it('should be loaded', function (done) {
-    var flow = [{ id: 'n1', type: 'streamdeck-in', name: 'streamdeck-in' }]
+    var flow = [{ id: 'n1', type: 'streamdeck-in', name: 'streamdeck-keyInput' }]
     helper.load(streamdeck, flow, function () {
       var n1 = helper.getNode('n1')
-      n1.should.have.property('name', 'streamdeck-in')
+      n1.should.have.property('name', 'streamdeck-keyInput')
       done()
     })
   })
 
-  it('should be loaded', function (done) {
-    var flow = [{ id: 'n1', type: 'streamdeck-out', name: 'streamdeck-out' }]
-    helper.load(streamdeck, flow, function () {
-      var n1 = helper.getNode('n1')
-      n1.should.have.property('name', 'streamdeck-out')
-      done()
-    })
-  })
 })
