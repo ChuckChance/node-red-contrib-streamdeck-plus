@@ -1,20 +1,8 @@
-# node-red-contrib-streamdeck
+# node-red-contrib-streamdeck-plus
 
-A Node-RED node to interact with the Elgato Stream Deck products.
+WIP Fork - Nothing works so far, come back quite later !
 
-# Installation
-
-## Local
-```
-npm install --save node-red-contrib-streamdeck
-```
-
-## Global
-```
-npm install -g node-red-contrib-streamdeck
-```
-
-## Linux
+## Linux setup
 
 On Linux, you will need to add these to `/etc/udev/rules.d/50-elgato.rules` :
 
@@ -28,58 +16,44 @@ SUBSYSTEM=="usb", ATTRS{idVendor}=="0fd9", ATTRS{idProduct}=="006d", MODE:="666"
 
 And run `sudo udevadm control --reload-rules`
 
+Installing this mightalso  require you to install the following packages : `libusb-1.0-dev` and either `libudev-dev` or `eudev-dev`
+
 # Usage
 
-## stream deck in
+## keyInput
+Returns the following :
+- `msg.topic` : key's index
+- `msg.payload` : keypress duration (will be 0 for "key down")
 
-The input node will allow you to get which keys are pressed on the unit.
+## clearKey
+- `msg.topic` : key's index (-1 to clear all)
 
-The key index will be sent as `msg.topic` as an integer starting from 0. The key state (down or up) will be sent as an integer in `msg.payload`. 1 is down and 0 is up.
+## setBrightness
+- `msg.topic` : key's index
+- `msg.payload` : integer value (0-100)
 
-## stream deck out
+## setImage
+- `msg.topic` : key's index
+- `msg.payload` : path/url/buffer data of image
 
-The output node is used to send images to the keys and control various functions.
+## setColor
+- `msg.topic` : key's index
+- `msg.payload` : hex value of color to fill
 
-### Inputs
+## setText
+- `msg.topic` : key's index
+- `msg.payload` : Object with the following properties
+  - `text` : the text to display, line returns must be included
+  - `font`: path to the custom font file _(default ???)_
+  - `fontSize`: integer for font size _(default 10)_
+  - `centered` : true or false _(true by default)_
+  - `backgroundColor` : hex value for background color _(transparent by default)_
+  - `backgroundImage` : path/url/buffer data of image _(none by default)_
+  - `textColor`: hex value for text color _(white by default)_
+  - `disableCache`: disable caching _(false by default)_
 
-payload: This should be an object containing a command property. Some commands require additional properties, described in the commands section below.
+Will generate an image with the text and set it like setImage. By default the image will be cached as a PNG for faster processing the following times.
 
-topic: An integer representing the index of the key to send the command to, starts at 0.
+## listStreamDecks
+Will list the available Stream Decks in debug data
 
-### Commands
-
-#### fillColor array
-Should have a value property containing an array of color values in RGB order, between 0 and 255. keyIndex should be passed as the topic.
-
-#### fillImage path | url | buffer
-Should have an image property containing either a file path, url or buffer containing image data. keyIndex should be passed as the topic.
-
-#### fillPanel path | url | buffer
-Same as fillImage but will fill the entire panel.
-
-#### clearKey
-Will clear a key with keyIndex passed as topic.
-
-#### clearAllKeys
-Will clear the whole panel.
-
-#### resetToLogo
-Will show the default Stream Deck logo.
-
-#### setBrightness integer
-Should have a value property containing an integer between 0 and 100.
-
-#### listStreamDecks
-Will list the available Stream Decks.
-
-Example
-
-```json
-{
-  "topic": 3
-  "payload" : {
-    "command": "fillImage",
-    "image": "./node-red.png"
-  }
-}
-```
