@@ -19,130 +19,174 @@ function streamDeckInit () {
 }
 
 module.exports = function (RED) {
-  function StreamDeckIn (config) {
+  function StreamDeckKeyInput (config) {
     RED.nodes.createNode(this, config)
     var node = this
     streamDeckInit()
     if (myStreamDeck) {
       myStreamDeck.on('up', keyIndex => {
-        node.send({ topic: keyIndex, payload: 0 })
+        node.send({ topic: keyIndex, payload: 1 }) // TODO: change to key press duration
       })
       myStreamDeck.on('down', keyIndex => {
-        node.send({ topic: keyIndex, payload: 1 })
+        node.send({ topic: keyIndex, payload: 0 })
       })
     }
   }
 
-  function StreamDeckOut (config) {
+  
+  /*
+   *   CLEAR KEY
+   */
+  function StreamDeckClearKey (config) {
     RED.nodes.createNode(this, config)
     var node = this
     streamDeckInit()
     node.on('input', function (msg) {
       if (myStreamDeck) {
-        const keyIndex = parseInt(msg.topic)
-        if (msg.payload.command) {
-          switch (msg.payload.command) {
-            case 'fillColor':
-              if (!Number.isInteger(keyIndex)) {
-                node.error('keyIndex missing in topic', msg)
-                return
-              }
-              try {
-                myStreamDeck.fillColor(keyIndex, ...msg.payload.value)
-              } catch (error) {
-                node.error('Can\'t write to StreamDeck', msg)
-              }
-              break
-            case 'fillImage':
-              if (!Number.isInteger(keyIndex)) {
-                node.error('keyIndex missing in topic', msg)
-                return
-              }
-              Jimp.read(msg.payload.image, (err, image) => {
-                if (err) {
-                  node.error(err, msg)
-                  return
-                }
-                image = image.resize(myStreamDeck.ICON_SIZE, myStreamDeck.ICON_SIZE).bitmap.data
-                const finalBuffer = Buffer.alloc(myStreamDeck.ICON_SIZE ** 2 * 3)
-                for (let p = 0; p < image.length / 4; p++) {
-                  image.copy(finalBuffer, p * 3, p * 4, p * 4 + 3)
-                }
-                try {
-                  myStreamDeck.fillImage(keyIndex, finalBuffer)
-                } catch (error) {
-                  node.error('Can\'t write to StreamDeck', msg)
-                }
-              })
-              break
-            case 'fillPanel':
-              Jimp.read(msg.payload.image, (err, image) => {
-                if (err) {
-                  node.error(err, msg)
-                  return
-                }
-                image = image.resize(myStreamDeck.ICON_SIZE * myStreamDeck.KEY_COLUMNS, myStreamDeck.ICON_SIZE * myStreamDeck.KEY_ROWS).bitmap.data
-                const finalBuffer = Buffer.alloc((myStreamDeck.ICON_SIZE * myStreamDeck.KEY_COLUMNS * myStreamDeck.ICON_SIZE * myStreamDeck.KEY_ROWS * 3))
-                for (let p = 0; p < image.length / 4; p++) {
-                  image.copy(finalBuffer, p * 3, p * 4, p * 4 + 3)
-                }
-                try {
-                  myStreamDeck.fillPanel(finalBuffer)
-                } catch (error) {
-                  node.error('Can\'t write to StreamDeck', msg)
-                }
-              })
-              break
-            case 'clearAllKeys':
-              try {
-                myStreamDeck.clearAllKeys()
-              } catch (error) {
-                node.error('Can\'t write to StreamDeck', msg)
-              }
-              break
-            case 'clearKey':
-              if (!Number.isInteger(keyIndex)) {
-                node.error('keyIndex missing in topic')
-                return
-              }
-              try {
-                myStreamDeck.clearKey(keyIndex)
-              } catch (error) {
-                node.error('Can\'t write to StreamDeck', msg)
-              }
-              break
-            case 'resetToLogo':
-              try {
-                myStreamDeck.resetToLogo()
-              } catch (error) {
-                node.error('Can\'t write to StreamDeck', msg)
-              }
-              break
-            case 'setBrightness':
-              try {
-                myStreamDeck.setBrightness(msg.payload.value)
-              } catch (error) {
-                node.error('Can\'t write to StreamDeck', msg)
-              }
-              break
-            case 'listStreamDecks':
-              try {
-                node.warn(listStreamDecks())
-              } catch (error) {
-                node.error('Can\'t write to StreamDeck', msg)
-              }
-              break
+        const keyIndex = parseInt(msg.topic);
+
+        if(keyIndex == -1) {
+          try {
+            myStreamDeck.clearAllKeys()
+          } catch (error) {
+            node.error('Can\'t write to StreamDeck', msg)
+          }
+            break
+        } else {
+          try {
+            myStreamDeck.clearKey(keyIndex)
+          } catch (error) {
+            node.error('Can\'t write to StreamDeck', msg)
           }
         }
-      } else {
-        node.error('Stream Deck connection issue', msg)
       }
-    })
+    });
     node.on('close', function () {
       myStreamDeck.close()
       myStreamDeck = null
     })
   }
-  RED.nodes.registerType('streamdeck-in', StreamDeckIn)
-  RED.nodes.registerType('streamdeck-out', StreamDeckOut)
+
+  /*
+   *  SET BRIGHTNESS
+   */
+  function StreamDeckSetBrightness (config) {
+    RED.nodes.createNode(this, config)
+    var node = this
+    streamDeckInit()
+    node.on('input', function (msg) {
+      if (myStreamDeck) {
+        try {
+          myStreamDeck.setBrightness(msg.payload.value)
+        } catch (error) {
+          node.error('Can\'t write to StreamDeck', msg)
+        }
+      }
+    });
+    node.on('close', function () {
+      myStreamDeck.close()
+      myStreamDeck = null
+    })
+  }
+        
+  /*
+   *  SET IMAGE
+   */
+  function StreamDeckSetImage (config) {
+    RED.nodes.createNode(this, config)
+    var node = this
+    streamDeckInit()
+    node.on('input', function (msg) {
+      if (myStreamDeck) {
+        const keyIndex = parseInt(msg.topic);
+
+        Jimp.read(msg.payload.image, (err, image) => {
+          if (err) {
+            node.error(err, msg)
+            return
+          }
+          image = image.resize(myStreamDeck.ICON_SIZE, myStreamDeck.ICON_SIZE).bitmap.data
+          const finalBuffer = Buffer.alloc(myStreamDeck.ICON_SIZE ** 2 * 3)
+          for (let p = 0; p < image.length / 4; p++) {
+            image.copy(finalBuffer, p * 3, p * 4, p * 4 + 3)
+          }
+          try {
+            if(keyIndex >= 0) {
+              myStreamDeck.fillImage(keyIndex, finalBuffer)
+            } else {
+              for(var i=0; i<myStreamDeck.KEY_COLUMNS * myStreamDeck.KEY_ROWS; i++) {
+                myStreamDeck.fillImage(i, finalBuffer)
+              }
+            }
+          } catch (error) {
+            node.error('Can\'t write to StreamDeck', msg)
+          }
+        })
+      }
+    });
+    node.on('close', function () {
+      myStreamDeck.close()
+      myStreamDeck = null
+    })
+  }
+            
+  /*
+   *  SET COLOR
+   */     
+  function StreamDeckSetColor (config) {
+    RED.nodes.createNode(this, config)
+    var node = this
+    streamDeckInit()
+    node.on('input', function (msg) {
+      if (myStreamDeck) {
+        const keyIndex = parseInt(msg.topic);
+
+        try {
+          if(keyIndex >= 0) {
+            myStreamDeck.fillColor(keyIndex, ...msg.payload.value)
+          } else {
+            for(var i=0; i<myStreamDeck.KEY_COLUMNS * myStreamDeck.KEY_ROWS; i++) {
+              myStreamDeck.fillColor(i, ...msg.payload.value)
+            }
+          }
+        } catch (error) {
+          node.error('Can\'t write to StreamDeck', msg)
+        }
+      }
+    });
+    node.on('close', function () {
+      myStreamDeck.close()
+      myStreamDeck = null
+    })
+  }
+            
+  /*
+   *  SET TEXT
+   */  
+  function StreamDeckSetText (config) {
+    RED.nodes.createNode(this, config)
+    var node = this
+    streamDeckInit()
+    node.on('input', function (msg) {
+      if (myStreamDeck) {
+        const keyIndex = parseInt(msg.topic);
+        // msg.payload
+        node.error('WIP function used', msg)
+        return
+      }
+    });
+    node.on('close', function () {
+      myStreamDeck.close()
+      myStreamDeck = null
+    })
+  }
+      
+  RED.nodes.registerType('streamdeck-keyInput', StreamDeckKeyInput)
+  RED.nodes.registerType('streamdeck-clearKey', StreamDeckClearKey)
+  RED.nodes.registerType('streamdeck-setBrightness', StreamDeckSetBrightness)
+  RED.nodes.registerType('streamdeck-setImage', StreamDeckSetImage)
+  RED.nodes.registerType('streamdeck-setColor', StreamDeckSetColor)
+  RED.nodes.registerType('streamdeck-setText', StreamDeckSetText)
+  
+  //RED.nodes.registerType('streamdeck-out', StreamDeckOut)
 }
