@@ -23,7 +23,7 @@ Installing this mightalso  require you to install the following packages : `libu
 ## keyInput
 Returns the following :
 - `msg.topic` : key's index
-- `msg.payload` : keypress duration (will be 0 for "key down")
+- `msg.payload` : keypress duration (will be 0 for "key down" and always a strictly greater than 0 integer for "key up")
 
 ## clearKey
 - `msg.topic` : key's index (-1 to clear all)
