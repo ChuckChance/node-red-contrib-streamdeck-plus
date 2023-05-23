@@ -1,64 +1,67 @@
-<script type="text/x-red" data-help-name="streamdeck-in">
+<script type="text/x-red" data-help-name="streamdeck-keyInput">
   <p>A node that will output the state of the Stream Deck keys.</p>
   <h3>Outputs</h3>
   <dl class="message-properties">
     <dt>payload<span class="property-type">integer</span></dt>
-    <dd>Will be <code>1</code> when the key is down, <code>0</code> when the key is up.</dd>
+    <dd>Will be <code>0</code> when the key is down and keypress duration (always a strictly greater than zero integer) when the key is up.</dd>
     <dt>topic <span class="property-type">integer</span></dt>
     <dd>The index of the key being pressed, starts at <code>0</code></dd>
   </dl>
 </script>
 
-<script type="text/x-red" data-help-name="streamdeck-out">
-  <p>A node to send commands to a Stream Deck.</p>
+<script type="text/x-red" data-help-name="streamdeck-clearKey">
+  <p>A node to clear Stream Deck's keys</p>
   <h3>Inputs</h3>
   <dl class="message-properties">
-    <dt>payload<span class="property-type">object</span></dt>
-    <dd>This should be an object containing a <code>command</code> property. 
-    Some commands require additional properties, described in the commands section below.</dd>
-    <dt class="optional">topic <span class="property-type">integer</span></dt>
-    <dd>The index of the key to send the command to, starts at <code>0</code>.</dd>
+    <dt>topic <span class="property-type">integer</span></dt>
+    <dd>The index of the key to clear, starts at <code>0</code>. Use -1 to clear all keys</dd>
   </dl>
+</script>
 
-  <h3>Commands</h3>
+<script type="text/x-red" data-help-name="streamdeck-setBrightness">
+  <p>A node to clear Stream Deck's keys</p>
+  <h3>Inputs</h3>
   <dl class="message-properties">
-    <dt>fillColor<span class="property-type">array</span></dt>
-    <dd>Should have a <code>value</code> property containing an array of color values in RGB order, between <code>0</code> and <code>255</code>. 
-    keyIndex should be passed as the <code>topic</code>.</dd>
-    
-    <dt>fillImage<span class="property-type">path | url | buffer</span></dt>
-    <dd>Should have an <code>image</code> property containing either a file path, url or buffer containing image data. 
-    keyIndex should be passed as the <code>topic</code>.</dd>
-    
-    <dt>fillPanel<span class="property-type">path | url | buffer</span></dt>
-    <dd>Same as <code>fillImage</code> but will fill the entire panel.</dd>
-    
-    <dt>clearKey</dt>
-    <dd>Will clear a key with keyIndex passed as <code>topic</code>.</dd>
-    
-    <dt>clearAllKeys</dt>
-    <dd>Will clear the whole panel.</dd>
-    
-    <dt>resetToLogo</dt>
-    <dd>Will show the default Stream Deck logo.</dd>
-
-    <dt>setBrightness<span class="property-type">integer</span></dt>
-    <dd>Should have a <code>value</code> property containing an integer between <code>0</code> and <code>100</code>.</dd>
-
-    <dt>listStreamDecks</dt>
-    <dd>Will list the available Stream Decks.</dd>
+    <dt>topic <span class="property-type">integer</span></dt>
+    <dd>The index of the key to change, starts at <code>0</code>. Use -1 to change the value for all keys</dd>
+    <dt>payload <span class="property-type">integer</span></dt>
+    <dd>The brightness to set the (all) keys at (value will be bound to 0-100 interval)</dd>
   </dl>
+</script>
 
-  <h3>Example</h3>
-  <dl>
-<pre>
-{
-  "topic": 3
-  "payload" : {
-    "command": "fillImage",
-    "image": "./node-red.png"
-  }
-}
-</pre>
+
+<script type="text/x-red" data-help-name="streamdeck-setImage">
+  <p>A node to assign an image Stream Deck's keys</p>
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>topic <span class="property-type">integer</span></dt>
+    <dd>The index of the key to change, starts at <code>0</code></dd>
+    <dt>payload <span class="property-type">string</span></dt>
+    <dd>path/url/buffer data of image</dd>
+  </dl>
+</script>
+
+
+
+<script type="text/x-red" data-help-name="streamdeck-setColor">
+  <p>A node to assign a color to Stream Deck's keys</p>
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>topic <span class="property-type">integer</span></dt>
+    <dd>The index of the key to change, starts at <code>0</code>. Use -1 to change the color for all keys</dd>
+    <dt>payload <span class="property-type">string</span></dt>
+    <dd>hex RGB value to use as filling color</dd>
+  </dl>
+</script>
+
+
+<script type="text/x-red" data-help-name="streamdeck-setText">
+  <p>A node to assign a color to Stream Deck's keys</p>
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>topic <span class="property-type">integer</span></dt>
+    <dd>The index of the key to change, starts at <code>0</code></dd>
+    <dt>payload <span class="property-type">object</span></dt>
+    <dd>WIP...</dd>
   </dl>
 </script>
